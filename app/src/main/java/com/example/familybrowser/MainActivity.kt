@@ -59,7 +59,8 @@ class MainActivity : AppCompatActivity() {
                     val button = Button (this)
                     button.layoutParams = LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.WRAP_CONTENT,
-                        LinearLayout.LayoutParams.MATCH_PARENT                    )
+                        LinearLayout.LayoutParams.MATCH_PARENT
+                    )
 
                     button.setOnClickListener(View.OnClickListener { val alertDialogBuilder = AlertDialog.Builder(this)
                     alertDialogBuilder.setMessage(data)})
