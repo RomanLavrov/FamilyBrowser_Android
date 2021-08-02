@@ -2,6 +2,7 @@ package com.example.familybrowser
 
 import android.app.AlertDialog
 import android.app.DownloadManager
+import android.content.Intent
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
@@ -30,8 +31,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val textView = findViewById<TextView>(R.id.textView2)
-        val layout = findViewById<ConstraintLayout>(R.id.layoutSystem)
+        //val textView = findViewById<TextView>(R.id.textView2)
+        //val layout = findViewById<ConstraintLayout>(R.id.layoutSystem)
 
 
 // Instantiate the RequestQueue.
@@ -40,48 +41,51 @@ class MainActivity : AppCompatActivity() {
         val url = "https://api.webcatalog.building360.ch/api/FamilySystem"
 
 // Request a string response from the provided URL.
-        val linearlayout = findViewById<ConstraintLayout>(R.id.layoutButtons) as LinearLayout
-        linearlayout.orientation = LinearLayout.VERTICAL
+        //val linearlayout = findViewById<ConstraintLayout>(R.id.layoutButtons) as LinearLayout
+        val linearLayout = LinearLayout(this)
+        linearLayout.orientation = LinearLayout.VERTICAL
 
-        val jsonObjectRequest = JsonArrayRequest(Request.Method.GET, url, null,
+        val jsonArrayRequest = JsonArrayRequest(Request.Method.GET, url, null,
             { response ->
                 for ( system in 0 until response.length()  ){
                     val jsonObject = response.getJSONObject(system)
-                    val data=jsonObject.getString("SystemName");
+                    val systemName=jsonObject.getString("SystemName");
 
                     val row = LinearLayout(this)
+
                     row.layoutParams = LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.WRAP_CONTENT
                     )
 
-
                     val button = Button (this)
                     button.layoutParams = LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.WRAP_CONTENT,
-                        LinearLayout.LayoutParams.MATCH_PARENT
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
                     )
 
-                    button.setOnClickListener(View.OnClickListener { val alertDialogBuilder = AlertDialog.Builder(this)
-                    alertDialogBuilder.setMessage(data)})
-                    button.text = data
+                    button.setOnClickListener(View.OnClickListener {
+                        val intent = Intent(
+                            this,
+                            CategoriesActivity::class.java
+                        )
+                        intent.putExtra("systemName", systemName)
+                        intent.putExtra("id", jsonObject.getString("ID"))
+                       startActivity(intent)
+                    })
+
+                    button.text = systemName
                     row.addView(button)
-                    linearlayout.addView(row);
+                    linearLayout.addView(row);
                 }
-                //setContentView(linearlayout)
-                textView.text = "Response: %s".format(response.toString())
+                setContentView(linearLayout)
+                //textView.text = "Response: %s".format(response.toString())
             },
             { error ->
-                textView.text = "Error" + error.message
+                //textView.text = "Error" + error.message
             }
-
-
         )
 
-// Add the request to the RequestQueue.
-        queue.add(jsonObjectRequest)
-
+        queue.add(jsonArrayRequest)
     }
-
-
 }
