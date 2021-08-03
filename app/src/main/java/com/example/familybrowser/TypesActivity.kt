@@ -2,6 +2,9 @@ package com.example.familybrowser
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonArrayRequest
@@ -16,6 +19,10 @@ class TypesActivity : AppCompatActivity() {
         val systemName = intent.getStringExtra("systemName")
         val categoryName = intent.getStringExtra("categoryName")
 
+        val scrollView = ScrollView(this)
+        val linearLayout = LinearLayout(this)
+        linearLayout.orientation = LinearLayout.VERTICAL
+
         val textView = findViewById<TextView>(R.id.textView3)
         textView.text = "${systemName} ${categoryName}"
 
@@ -25,10 +32,30 @@ class TypesActivity : AppCompatActivity() {
             Request.Method.GET, url, null,
             { response ->
                 textView.text = response.toString()
+                for (type in 0 until response.length()) {
+                    val jsonObject = response.getJSONObject(type)
+                    val row = LinearLayout(this)
+                    row.layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    )
 
+                    val typeName = jsonObject.getString("TypeName")
+                    val button = Button(this)
+                    button.text = typeName
+                    button.layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    )
+
+                    row.addView(button)
+                    linearLayout.addView(row);
+                }
             },
             {error ->textView.text  = error.message})
 
+        scrollView.addView(linearLayout)
+        setContentView(scrollView)
         queue.add(jsonArray)
     }
 }
