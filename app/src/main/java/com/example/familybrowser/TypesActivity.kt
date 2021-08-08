@@ -1,7 +1,9 @@
 package com.example.familybrowser
 
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.ScrollView
@@ -9,6 +11,7 @@ import android.widget.TextView
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.Volley
+import com.example.familybrowser.models.TypeDetails
 
 class TypesActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,6 +50,16 @@ class TypesActivity : AppCompatActivity() {
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.WRAP_CONTENT
                     )
+                    button.setOnClickListener(View.OnClickListener {
+                        val intent = Intent (this, DetailsActivity::class.java)
+                        val typeName = jsonObject.getString("TypeName")
+                        val familyName = jsonObject.getString("FamilyName")
+                        val description = jsonObject.getString("Description")
+                        val typeId = jsonObject.getString("TypeId")
+                        val typeDetails = TypeDetails(typeName, familyName, description, typeId)
+                        intent.putExtra("type", typeDetails)
+                        startActivity(intent)
+                    })
 
                     row.addView(button)
                     linearLayout.addView(row);
